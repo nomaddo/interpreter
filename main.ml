@@ -1,7 +1,14 @@
 open Ast
 
+(* 環境の定義
+ * 変数を定義した時に、どの変数がどの値だったのか覚えておく
+ * immutableなデータ構造にする
+*)
 module Env = Map.Make (struct type t = string let compare = compare end)
 
+(* インタプリタの本体
+ * この関数自体が評価結果のintを返し、再帰的に計算する
+*)
 let rec run env = function
   | Const i -> i
   | Var   s ->
@@ -26,18 +33,18 @@ let rec run env = function
     if run env cond > 0 then run env x else run env y
   | While _ -> failwith "while"
 
+(* オプションの定義 *)
 let show_ast = ref false
-
 let spec = [("--show-ast", Arg.Unit (fun () -> show_ast := true), "show ast")]
 
-let usage = ""
+let usage = "./ml [--show-ast] file"
 
 let main anonymous =
   let inc = open_in anonymous in
   let lexbuf = Lexing.from_channel inc in
   let ast = Parser.main Lexer.token lexbuf in
   begin if !show_ast then Printf.printf "%s\n" (Ast.show ast) end;
-  Format.printf "%d\n" @@ run Env.empty ast
+  ignore (run Env.empty ast)
 
 let _ =
   Arg.parse spec main usage

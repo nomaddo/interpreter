@@ -1,3 +1,11 @@
+/* パーサーの定義
+ * lexerが文字列をトークンの列に区切ってくれるので
+ * 木構造を作りなおすルールを定義する
+ *
+ * 詳細はマニュアルを読む
+ * http://ocaml.jp/archive/ocaml-manual-3.06-ja/manual026.html
+ */
+
 %{
   open Ast
 %}
